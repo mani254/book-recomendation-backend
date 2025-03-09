@@ -2,8 +2,15 @@ const Author = require("../schema/author");
 
 const authorsController = {
    async getAuthors(req, res) {
+      const { search } = req.query
       try {
-         const authors = await Author.find({});
+         let authors
+         if (search) {
+            authors = await Author.find({ name: { $regex: search, $options: 'i' } })
+         }
+         else {
+            authors = await Author.find({});
+         }
          return res.status(200).json({ authors, message: "Authors fetched successfully" });
       } catch (err) {
          console.error("Error fetching authors:", err);
